@@ -1,39 +1,21 @@
 /* eslint-disable react/destructuring-assignment */
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 
-class QuizSummary extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            score: 0,
-            numberOfQuestions: 0,
-            numberOfAnsweredQuestions: 0,
-            correctAnswers: 0,
-            wrongAnswers: 0,
-            hintsUsed: 0,
-            fiftyFiftyUsed: 0,
-        };
-    }
+const QuizSummary = (props) => {
+    const [score, setScore] = useState(0);
+    const [numberOfQuestions, setNumberOfQuestions] = useState(0);
+    const [numberOfAnsweredQuestions, setNumberOfAnsweredQuestions] = useState(0);
+    const [correctAnswers, setCorrectAnswers] = useState(0);
+    const [wrongAnswers, setWrongAnswers] = useState(0);
+    const [hintsUsed, setHintsUsed] = useState(0);
+    const [fiftyFiftyUsed, setFiftyFiftyUsed] = useState(0);
 
-    componentDidMount() {
-        const { state } = this.props.location;
-        if (state) {
-            this.setState({
-                score: (state.score / state.numberOfQuestions) * 100,
-                numberOfQuestions: state.numberOfQuestions,
-                numberOfAnsweredQuestions: state.numberOfAnsweredQuestions,
-                correctAnswers: state.correctAnswers,
-                wrongAnswers: state.wrongAnswers,
-                hintsUsed: state.hintsUsed,
-                fiftyFiftyUsed: state.fiftyFiftyUsed,
-            });
-        }
-    }
-
-    render() {
-        const { state } = this.props.location;
+    return(
+        <>
+     
+        const { state } = props.location;
         let stats;
         let remark;
         const userScore = this.state.score;
@@ -114,5 +96,7 @@ class QuizSummary extends Component {
         );
     }
 }
+</>
+);
 
 export default QuizSummary;

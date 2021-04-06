@@ -10,67 +10,47 @@
 /* eslint-disable no-shadow */
 import classnames from 'classnames';
 import M from 'materialize-css';
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
 import buttonSound from '../../assets/audio/button-sound.mp3';
 import correctNotification from '../../assets/audio/correct-answer.mp3';
 import wrongNotification from '../../assets/audio/wrong-answer.mp3';
-import questions from '../../questions.json';
 import isEmpty from '../../utils/is-empty';
 
-class Play extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            questions,
-            currentQuestion: {},
-            nextQuestion: {},
-            previousQuestion: {},
-            answer: '',
-            numberOfQuestions: 0,
-            numberOfAnsweredQuestions: 0,
-            currentQuestionIndex: 0,
-            score: 0,
-            correctAnswers: 0,
-            wrongAnswers: 0,
-            hints: 5,
-            fiftyFifty: 2,
-            usedFiftyFifty: false,
-            nextButtonDisabled: false,
-            previousButtonDisabled: true,
-            previousRandomNumbers: [],
-            time: {},
-        };
-        this.interval = null;
-        this.correctSound = React.createRef();
-        this.wrongSound = React.createRef();
-        this.buttonSound = React.createRef();
-    }
+const Play = (props) => {
+    const [questions, setQuestions] = useState();
+    const [currentQuestion, setCurrentQuestion] = useState({});
+    const [nextQuestion, setNextQuestion] = useState({});
+    const [previousQuestion, setPreviousQuestion] = useState({});
+    const [answer, setAnswer] = useState('');
+    const [numberOfQuestions, setNumberOfQuestions] = useState(0);
+    const [numberOfAnsweredQuestions, setNumberOfAnsweredQuestions] = useState(0);
+    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+    const [score, setScore] = useState(0);
+    const [correctAnswers, setCorrectAnswers] = useState(0);
+    const [wrongAnswers, setWrongAnswers] = useState(0);
+    const [hints, setHints] = useState(5);
+    const [fiftyFifty, setFiftyFifty] = useState(2);
+    const [usedFiftyFifty, setUsedFiftyFifty] = useState(false);
+    const [nextButtonDisabled, setNextButtonDisabled] = useState(false);
+    const [previousButtonDisabled, setPreviousButtonDisabled] = useState(true);
+    const [previousRandomNumbers, setPreviousRandomNumbers] = useState([]);
+    const [time, setTime] = useState({});
 
-    componentDidMount() {
-        const { questions, currentQuestion, nextQuestion, previousQuestion } = this.state;
-        this.displayQuestions(questions, currentQuestion, nextQuestion, previousQuestion);
-        this.startTimer();
-    }
-
-    componentWillUnmount() {
-        clearInterval(this.interval);
-    }
-
-    displayQuestions = (
-        questions = this.state.questions,
+    const displayQuestions = (
+        questions,
         currentQuestion,
         nextQuestion,
         previousQuestion
     ) => {
-        const { currentQuestionIndex } = this.state;
-        if (!isEmpty(this.state.questions)) {
-            questions = this.state.questions;
-            currentQuestion = questions[currentQuestionIndex];
-            nextQuestion = questions[currentQuestionIndex + 1];
-            previousQuestion = questions[currentQuestionIndex - 1];
+        
+        if (!isEmpty(questions)) {
+         
+            setCurrentQuestion (questions[currentQuestionIndex]);
+            setNextQuestion (questions[currentQuestionIndex + 1]);
+            setPreviousQuestion(questions[currentQuestionIndex - 1]);
             const { answer } = currentQuestion;
-            this.setState(
+            setQuestions(
                 {
                     currentQuestion,
                     nextQuestion,
@@ -80,15 +60,14 @@ class Play extends Component {
                     previousRandomNumbers: [],
                 },
                 () => {
-                    this.showOptions();
-                    this.handleDisableButton();
+                    showOptions();
+                    handleDisableButton();
                 }
             );
         }
     };
-
-    handleOptionClick = (e) => {
-        if (e.target.innerHTML.toLowerCase() === this.state.answer.toLowerCase()) {
+    const handleOptionClick = (e) => {
+        if (e.target.innerHTML.toLowerCase() === answer.toLowerCase()) {
             this.correctTimeout = setTimeout(() => {
                 this.correctSound.current.play();
             }, 500);
@@ -100,10 +79,9 @@ class Play extends Component {
             this.wrongAnswer();
         }
     };
-
-    handleNextButtonClick = () => {
+    const handleNextButtonClick = () => {
         this.playButtonSound();
-        if (this.state.nextQuestion !== undefined) {
+        if (nextQuestion !== undefined) {
             this.setState(
                 (prevState) => ({
                     currentQuestionIndex: prevState.currentQuestionIndex + 1,
@@ -119,10 +97,9 @@ class Play extends Component {
             );
         }
     };
-
-    handlePreviousButtonClick = () => {
+    const handlePreviousButtonClick = () => {
         this.playButtonSound();
-        if (this.state.previousQuestion !== undefined) {
+        if (previousQuestion !== undefined) {
             this.setState(
                 (prevState) => ({
                     currentQuestionIndex: prevState.currentQuestionIndex - 1,
@@ -138,38 +115,31 @@ class Play extends Component {
             );
         }
     };
-
-    handleQuitButtonClick = () => {
+    const handleQuitButtonClick = () => {
         this.playButtonSound();
         if (window.confirm('Are you sure you want to quit?')) {
             this.props.history.push('/');
         }
     };
-
-    handleButtonClick = (e) => {
+    const handleButtonClick = (e) => {
         switch (e.target.id) {
             case 'next-button':
                 this.handleNextButtonClick();
                 break;
-
             case 'previous-button':
                 this.handlePreviousButtonClick();
                 break;
-
             case 'quit-button':
                 this.handleQuitButtonClick();
                 break;
-
             default:
                 break;
         }
     };
-
-    playButtonSound = () => {
+    const playButtonSound = () => {
         this.buttonSound.current.play();
     };
-
-    correctAnswer = () => {
+    const correctAnswer = () => {
         M.toast({
             html: 'Correct Answer!',
             classes: 'toast-valid',
@@ -183,7 +153,7 @@ class Play extends Component {
                 numberOfAnsweredQuestions: prevState.numberOfAnsweredQuestions + 1,
             }),
             () => {
-                if (this.state.nextQuestion === undefined) {
+                if (nextQuestion === undefined) {
                     this.endGame();
                 } else {
                     this.displayQuestions(
@@ -196,8 +166,7 @@ class Play extends Component {
             }
         );
     };
-
-    wrongAnswer = () => {
+    const wrongAnswer = () => {
         navigator.vibrate(1000);
         M.toast({
             html: 'Wrong Answer!',
@@ -224,30 +193,24 @@ class Play extends Component {
             }
         );
     };
-
-    showOptions = () => {
+    const showOptions = () => {
         const options = Array.from(document.querySelectorAll('.option'));
-
         options.forEach((option) => {
             option.style.visibility = 'visible';
         });
-
         this.setState({
-            usedFiftyFifty: false,
+            setUsedFiftyFifty: false,
         });
     };
-
-    handleHints = () => {
-        if (this.state.hints > 0) {
+    const handleHints = () => {
+        if (hints > 0) {
             const options = Array.from(document.querySelectorAll('.option'));
             let indexOfAnswer;
-
             options.forEach((option, index) => {
-                if (option.innerHTML.toLowerCase() === this.state.answer.toLowerCase()) {
+                if (option.innerHTML.toLowerCase() === answer.toLowerCase()) {
                     indexOfAnswer = index;
                 }
             });
-
             while (true) {
                 const randomNumber = Math.round(Math.random() * 3);
                 if (
@@ -271,19 +234,16 @@ class Play extends Component {
             }
         }
     };
-
-    handleFiftyFifty = () => {
-        if (this.state.fiftyFifty > 0 && this.state.usedFiftyFifty === false) {
+    const handleFiftyFifty = () => {
+        if (fiftyFifty > 0 && usedFiftyFifty === false) {
             const options = document.querySelectorAll('.option');
             const randomNumbers = [];
             let indexOfAnswer;
-
             options.forEach((option, index) => {
-                if (option.innerHTML.toLowerCase() === this.state.answer.toLowerCase()) {
+                if (option.innerHTML.toLowerCase() === answer.toLowerCase()) {
                     indexOfAnswer = index;
                 }
             });
-
             let count = 0;
             do {
                 const randomNumber = Math.round(Math.random() * 3);
@@ -310,28 +270,23 @@ class Play extends Component {
                     }
                 }
             } while (count < 2);
-
             options.forEach((option, index) => {
                 if (randomNumbers.includes(index)) {
                     option.style.visibility = 'hidden';
                 }
             });
-            this.setState((prevState) => ({
-                fiftyFifty: prevState.fiftyFifty - 1,
-                usedFiftyFifty: true,
-            }));
-        }
+            
+                setFiftyFifty(prevState.fiftyFifty - 1),
+                setUsedFiftyFifty(true),  
+        };  
     };
-
-    startTimer = () => {
+    const startTimer = () => {
         const countDownTime = Date.now() + 300000;
         this.interval = setInterval(() => {
             const now = new Date();
             const distance = countDownTime - now;
-
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
             if (distance < 0) {
                 clearInterval(this.interval);
                 this.setState(
@@ -356,9 +311,8 @@ class Play extends Component {
             }
         }, 1000);
     };
-
-    handleDisableButton = () => {
-        if (this.state.previousQuestion === undefined || this.state.currentQuestionIndex === 0) {
+    const handleDisableButton = () => {
+        if (previousQuestion === undefined || currentQuestionIndex === 0) {
             this.setState({
                 previousButtonDisabled: true,
             });
@@ -367,10 +321,9 @@ class Play extends Component {
                 previousButtonDisabled: false,
             });
         }
-
         if (
-            this.state.nextQuestion === undefined ||
-            this.state.currentQuestionIndex + 1 === this.state.numberOfQuestions
+            nextQuestion === undefined ||
+            currentQuestionIndex + 1 === numberOfQuestions
         ) {
             this.setState({
                 nextButtonDisabled: true,
@@ -381,8 +334,7 @@ class Play extends Component {
             });
         }
     };
-
-    endGame = () => {
+    const endGame = () => {
         alert('Quiz has eneded!');
         const { state } = this;
         const playerStats = {
@@ -398,18 +350,8 @@ class Play extends Component {
             this.props.history.push('/play/quizSummary', playerStats);
         }, 1000);
     };
-
-    render() {
-        const {
-            currentQuestion,
-            currentQuestionIndex,
-            fiftyFifty,
-            hints,
-            numberOfQuestions,
-            time,
-        } = this.state;
-
-        return (
+    
+    return (
             <>
                 <Helmet>
                     <title>Quiz Page</title>
@@ -424,7 +366,7 @@ class Play extends Component {
                     <div className="lifeline-container">
                         <p>
                             <span
-                                onClick={this.handleFiftyFifty}
+                                onClick={() => handleFiftyFifty()}
                                 className="mdi mdi-set-center mdi-24px lifeline-icon"
                             >
                                 <span className="lifeline">{fiftyFifty}</span>
@@ -472,7 +414,6 @@ class Play extends Component {
                             {currentQuestion.optionD}
                         </p>
                     </div>
-
                     <div className="button-container">
                         <button
                             className={classnames('', {
@@ -497,7 +438,7 @@ class Play extends Component {
                 </div>
             </>
         );
-    }
-}
+    };
+
 
 export default Play;

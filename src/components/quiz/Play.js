@@ -274,12 +274,14 @@ const Play = (props) => {
                 if (randomNumbers.includes(index)) {
                     option.style.visibility = 'hidden';
                 }
+                setFiftyFifty(fiftyFifty - 1),
+                setUsedFiftyFifty(true), 
+            
             });
             
-                setFiftyFifty(prevState.fiftyFifty - 1),
-                setUsedFiftyFifty(true),  
-        };  
-    };
+                 
+          
+    
     const startTimer = () => {
         const countDownTime = Date.now() + 300000;
         this.interval = setInterval(() => {

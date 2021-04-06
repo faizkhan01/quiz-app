@@ -1,5 +1,5 @@
 /* eslint-disable react/destructuring-assignment */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 
@@ -11,6 +11,22 @@ const QuizSummary = (props) => {
     const [wrongAnswers, setWrongAnswers] = useState(0);
     const [hintsUsed, setHintsUsed] = useState(0);
     const [fiftyFiftyUsed, setFiftyFiftyUsed] = useState(0);
+
+
+    useEffect( () => {
+        const { state } = props.location;
+        if (state) {
+            setState({
+                setScore(score/numberOfQuestions * 100),
+                setNumberOfQuestions(numberOfQuestions),
+                setNumberOfAnsweredQuestions(numberOfAnsweredQuestions),
+                setCorrectAnswers(correctAnswers),
+                setWrongAnswers(wrongAnswers),
+                setHintsUsed(hintsUsed),
+                setFiftyFiftyUsed(fiftyFiftyUsed)
+            });
+        };
+    }, [] );
 
     return(
         <>

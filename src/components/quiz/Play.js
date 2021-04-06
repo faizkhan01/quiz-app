@@ -10,9 +10,8 @@
 /* eslint-disable no-shadow */
 import classnames from 'classnames';
 import M from 'materialize-css';
-import React, { useState } from 'react';
+import React, { createRef, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
-import buttonSound from '../../assets/audio/button-sound.mp3';
 import correctNotification from '../../assets/audio/correct-answer.mp3';
 import wrongNotification from '../../assets/audio/wrong-answer.mp3';
 import isEmpty from '../../utils/is-empty';
@@ -36,6 +35,22 @@ const Play = (props) => {
     const [previousButtonDisabled, setPreviousButtonDisabled] = useState(true);
     const [previousRandomNumbers, setPreviousRandomNumbers] = useState([]);
     const [time, setTime] = useState({});
+    const [interval, setInterval] = useState(null);
+
+    var correctSound = createRef();
+    var wrongSound = createRef();
+    var buttonSound = createRef();
+
+    useEffect( () => {
+        displayQuestions(questions, currentQuestion, nextQuestion, previousQuestion);
+        startTimer();
+    }, [] );
+
+    useEffect( () => {
+        setClearInterval(interval);
+    }, [] );
+
+    
 
     const displayQuestions = (
         questions,
@@ -273,11 +288,12 @@ const Play = (props) => {
             options.forEach((option, index) => {
                 if (randomNumbers.includes(index)) {
                     option.style.visibility = 'hidden';
-                }
-                setFiftyFifty(fiftyFifty - 1),
-                setUsedFiftyFifty(true), 
+                } 
             
             });
+            setFiftyFifty(fiftyFifty - 1),
+            setUsedFiftyFifty(true),
+        
             
                  
           
@@ -441,6 +457,5 @@ const Play = (props) => {
             </>
         );
     };
-
 
 export default Play;

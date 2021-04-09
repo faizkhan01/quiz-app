@@ -1,4 +1,4 @@
-import { Paper, Button, Typography } from "@material-ui/core";
+import { Button, Paper, Typography } from "@material-ui/core";
 import { Check, Close } from "@material-ui/icons";
 import { createMarkup } from "../helpers";
 

@@ -1,6 +1,6 @@
 {
   // Theme
-  "workbench.colorTheme": "Dracula",
+  "workbench.colorTheme": "Learn with Sumit - Peace of the eye",
 
   // config related to code formatting
   "editor.defaultFormatter": "esbenp.prettier-vscode",
